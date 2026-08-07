@@ -1,0 +1,95 @@
+# ============================================================
+#  Smart Desktop AI — Unified Training Pipeline — Configuration
+#  All paths are relative to the smart-desktop-ai project root.
+# ============================================================
+
+datasets:
+  custom_desktop:
+    root: "./screenshots"
+    enabled: true
+    max_samples: null          # null = use all available
+    augment_factor: 30         # 26 × 30 = ~780 training samples
+    tesseract_cmd: "F:\\tesseract\\tesseract.exe"
+
+  icdar2015:
+    root: "./training/data/icdar2015"
+    enabled: false
+    max_samples: null
+
+  cocotext:
+    root: "./training/data/cocotext"
+    enabled: false
+    max_samples: 5000          # Subset for manageable training
+
+  rvlcdip:
+    root: "./training/data/rvlcdip"
+    enabled: false             # Disabled — dataset is 40GB+, exceeds C: drive space
+    max_samples: 10000         # 10K subset (full = 400K)
+
+  funsd:
+    root: "./training/data/funsd"
+    enabled: true
+    augment_factor: 10         # 199 × 10 = ~1990 training samples (boosted)
+
+# ── Model architecture ────────────────────────────────────────
+model:
+  backbone: "efficientnet_b0"  # VRAM-friendly (4GB budget)
+  pretrained: true
+  num_text_classes: 2          # text / no-text
+  num_doc_classes: 16          # RVLCDIP categories
+  num_form_labels: 4           # question / answer / header / other
+  max_detections: 100          # Max text regions per image
+
+# ── Training hyperparameters ──────────────────────────────────
+training:
+  epochs: 50
+  batch_size: 8                # Small batch for 4GB VRAM
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  warmup_epochs: 5
+  scheduler: "cosine"          # cosine | step | plateau
+  gradient_accumulation: 4     # Effective batch = 8 × 4 = 32
+  mixed_precision: true        # torch.cuda.amp
+  num_workers: 2
+
+  # Task-specific loss weights (private dataset boosted)
+  task_weights:
+    text_detection: 1.0
+    doc_classification: 1.0
+    form_understanding: 1.0
+    desktop_text: 1.5          # Higher weight for private data
+
+  # Checkpointing
+  checkpoint_dir: "./training/checkpoints"
+  save_best_only: true
+  save_every_n_epochs: 10
+
+# ── Image preprocessing ──────────────────────────────────────
+preprocessing:
+  detection_size: [640, 640]   # For text detection tasks
+  classification_size: [224, 224]  # For doc classification
+  normalize_mean: [0.485, 0.456, 0.406]  # ImageNet defaults
+  normalize_std: [0.229, 0.224, 0.225]
+  convert_grayscale_to_rgb: true
+
+# ── Evaluation ────────────────────────────────────────────────
+evaluation:
+  iou_threshold: 0.5
+  confidence_threshold: 0.3
+  metrics_output: "./training/results/metrics.json"
+  report_output: "./training/results/report.html"
+
+# ── Data splits ──────────────────────────────────────────────
+splits:
+  train_ratio: 0.8
+  val_ratio: 0.1
+  test_ratio: 0.1
+  stratify_by: ["source", "task"]  # Ensure all sources in all splits
+  random_seed: 42
+
+# ── Export ────────────────────────────────────────────────────
+export:
+  format: "onnx"               # onnx | pytorch
+  onnx_opset: 14
+  output_dir: "./training/exported_models"
+  quantize: false              # Post-training quantization

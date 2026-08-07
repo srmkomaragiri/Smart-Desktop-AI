@@ -1,0 +1,102 @@
+=== STDOUT ===
+============================================================
+  COMPREHENSIVE PIPELINE VERIFICATION
+============================================================
+
+--- Schema ---
+  [PASS] Schema imports + RVLCDIP_CLASSES
+  [PASS] Schema serialization
+  [PASS] DatasetSplit empty init
+
+--- Preprocessing ---
+  [PASS] clean_text
+  [PASS] validate_bbox
+  [PASS] clamp_bbox
+  [PASS] deduplicate
+
+--- Evaluator ---
+  [PASS] compute_iou
+  [PASS] edit_distance
+  [PASS] PipelineEvaluator (perfect scores)
+
+--- Loaders (import) ---
+  [PASS] icdar2015 import
+  [PASS] cocotext import
+  [PASS] rvlcdip import
+  [PASS] funsd import
+  [PASS] custom_desktop import
+
+--- Custom Desktop Loader (live data) ---
+    Loaded 26 screenshots
+  [PASS] Load private screenshots
+  [PASS] Source/task metadata correct
+
+--- Preprocessing (live) ---
+    After cleaning: 5 samples
+  [PASS] preprocess_all on screenshots
+
+--- Augmentation ---
+    Original: 5, Augmented: 95, Total: 100
+  [PASS] balance_datasets
+    Weights: min=1.0000, max=1.0000
+  [PASS] compute_sample_weights
+
+--- Download Utility ---
+    Found 26 screenshots
+  [PASS] verify_dataset (custom_desktop)
+
+--- Reports ---
+    Report: F:\dup\os_agent\training\results\verify_report.html (28.4 KB)
+  [PASS] generate_html_report
+
+--- Config ---
+    Backbone: efficientnet_b0
+    Epochs: 50, Batch: 8
+    Datasets: ['custom_desktop', 'icdar2015', 'cocotext', 'rvlcdip', 'funsd']
+  [PASS] config.yaml loading
+
+--- Torch / Models ---
+    PyTorch 2.9.1+cpu, GPU: False
+    MultiTaskModel: 13.23M params
+  [PASS] MultiTaskModel creation
+  [PASS] Model submodule imports
+
+--- Pipeline ---
+  [PASS] pipeline.py import
+  [PASS] trainer.py import
+  [PASS] dataset.py import
+
+============================================================
+  RESULTS: 28 passed, 0 failed, 0 skipped / 28 total
+  ALL TESTS PASSED!
+============================================================
+
+=== STDERR ===
+pytesseract not installed — cannot auto-annotate.
+pytesseract not installed — cannot auto-annotate.
+pytesseract not installed — cannot auto-annotate.
+pytesseract not installed — cannot auto-annotate.
+pytesseract not installed — cannot auto-annotate.
+pytesseract not installed — cannot auto-annotate.
+pytesseract not installed — cannot auto-annotate.
+pytesseract not installed — cannot auto-annotate.
+pytesseract not installed — cannot auto-annotate.
+pytesseract not installed — cannot auto-annotate.
+pytesseract not installed — cannot auto-annotate.
+pytesseract not installed — cannot auto-annotate.
+pytesseract not installed — cannot auto-annotate.
+pytesseract not installed — cannot auto-annotate.
+pytesseract not installed — cannot auto-annotate.
+pytesseract not installed — cannot auto-annotate.
+pytesseract not installed — cannot auto-annotate.
+pytesseract not installed — cannot auto-annotate.
+pytesseract not installed — cannot auto-annotate.
+pytesseract not installed — cannot auto-annotate.
+pytesseract not installed — cannot auto-annotate.
+pytesseract not installed — cannot auto-annotate.
+pytesseract not installed — cannot auto-annotate.
+pytesseract not installed — cannot auto-annotate.
+pytesseract not installed — cannot auto-annotate.
+pytesseract not installed — cannot auto-annotate.
+
+=== EXIT CODE: 0 ===
